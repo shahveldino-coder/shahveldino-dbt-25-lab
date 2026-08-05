@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KUBLABS — Event Organizer Korporat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a09;
+    --bg-alt:#131210;
+    --bg-card:#17150f;
+    --gold:#c6a15b;
+    --gold-light:#e6cd97;
+    --gold-dim:#7a6538;
+    --text:#f1ede3;
+    --text-muted:#a49d8c;
+    --line: rgba(198,161,91,0.22);
+    --serif: 'Fraunces', serif;
+    --sans: 'Inter', sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    font-weight:300;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
+
+  /* --- utility --- */
+  .eyebrow{
+    font-family:var(--sans);
+    font-size:11px;
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    color:var(--gold);
+    font-weight:500;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow::before{content:'';width:22px;height:1px;background:var(--gold-dim);}
+  .serif{font-family:var(--serif);}
+  .rule{
+    width:100%;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    color:var(--gold-dim);
+    margin:0 auto;
+  }
+  .rule::before,.rule::after{content:'';flex:1;height:1px;background:var(--line);}
+  .rule span{font-size:13px;transform:rotate(45deg);display:inline-block;color:var(--gold);}
+
+  .reveal{
+    opacity:0;
+    transform:translateY(26px);
+    transition:opacity .9s cubic-bezier(.16,.8,.24,1), transform .9s cubic-bezier(.16,.8,.24,1);
+  }
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  .stagger.in > *{transition-delay:calc(var(--i,0) * 90ms);}
+  .services-grid .service-card:nth-child(1){transition-delay:0ms}
+  .services-grid .service-card:nth-child(2){transition-delay:80ms}
+  .services-grid .service-card:nth-child(3){transition-delay:160ms}
+  .services-grid .service-card:nth-child(4){transition-delay:240ms}
+  .services-grid .service-card:nth-child(5){transition-delay:320ms}
+  .services-grid .service-card:nth-child(6){transition-delay:400ms}
+  .process .process-step:nth-child(1){transition-delay:0ms}
+  .process .process-step:nth-child(2){transition-delay:100ms}
+  .process .process-step:nth-child(3){transition-delay:200ms}
+  .process .process-step:nth-child(4){transition-delay:300ms}
+  .band-grid .band-item:nth-child(1){transition-delay:0ms}
+  .band-grid .band-item:nth-child(2){transition-delay:90ms}
+  .band-grid .band-item:nth-child(3){transition-delay:180ms}
+  .band-grid .band-item:nth-child(4){transition-delay:270ms}
+  .service-card, .process-step, .band-item, .comment-card{
+    opacity:0;transform:translateY(18px);
+    transition:opacity .7s ease, transform .7s ease;
+  }
+  .stagger.in .service-card,
+  .stagger.in .process-step,
+  .stagger.in .band-item,
+  .comments-list.in .comment-card{
+    opacity:1;transform:translateY(0);
+  }
+
+  .hero h1 em{position:relative;display:inline-block;}
+  .hero h1 em::after{
+    content:'';position:absolute;left:1px;right:1px;bottom:2px;height:2px;
+    background:var(--gold);transform-origin:left;transform:scaleX(0);
+    animation:underlineDraw 1.2s .6s cubic-bezier(.2,.8,.2,1) forwards;
+  }
+  @keyframes underlineDraw{to{transform:scaleX(1);}}
+
+  /* --- corner frame signature --- */
+  .frame{position:relative;}
+  .frame::before,.frame::after{
+    content:'';position:absolute;width:16px;height:16px;
+    border:1px solid var(--gold-dim);opacity:0;transition:opacity .5s ease, transform .5s ease;
+  }
+  .frame::before{top:-1px;left:-1px;border-right:none;border-bottom:none;transform:translate(-4px,-4px);}
+  .frame::after{bottom:-1px;right:-1px;border-left:none;border-top:none;transform:translate(4px,4px);}
+  .frame:hover::before,.frame:hover::after{opacity:1;transform:translate(0,0);border-color:var(--gold);}
+
+  /* --- nav --- */
+  header{
+    position:sticky;top:0;left:0;right:0;z-index:100;
+    background:rgba(10,10,9,0.88);
+    backdrop-filter:blur(10px);
+    padding:18px 0;
+    border-bottom:1px solid var(--line);
+  }
+  nav{display:flex;justify-content:space-between;align-items:center;}
+  .logo{
+    font-family:var(--serif);
+    font-size:22px;
+    letter-spacing:0.08em;
+    font-weight:500;
+  }
+  .logo span{color:var(--gold);}
+  .navlinks{display:flex;gap:40px;align-items:center;}
+  .navlinks a{
+    font-size:13px;letter-spacing:0.04em;color:var(--text-muted);
+    transition:color .3s ease;position:relative;
+  }
+  .navlinks a:hover{color:var(--text);}
+  .btn{
+    display:inline-block;
+    padding:13px 28px;
+    border:1px solid var(--gold-dim);
+    color:var(--gold-light);
+    font-size:12px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    transition:all .35s ease;
+    white-space:nowrap;
+  }
+  .btn:hover{border-color:var(--gold);background:var(--gold);color:#0a0a09;}
+  .btn-solid{background:var(--gold);color:#0a0a09;border:1px solid var(--gold);}
+  .btn-solid:hover{background:var(--gold-light);border-color:var(--gold-light);}
+  .navburger{display:none;font-size:22px;color:var(--gold);background:none;border:none;cursor:pointer;}
+
+  /* --- hero --- */
+  .hero{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    position:relative;
+    padding-top:120px;
+    background:
+      radial-gradient(ellipse 700px 500px at 82% 18%, rgba(198,161,91,0.10), transparent 60%),
+      var(--bg);
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.15fr 0.85fr;
+    gap:60px;
+    align-items:end;
+  }
+  .hero h1{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size:clamp(40px, 5.4vw, 76px);
+    line-height:1.06;
+    letter-spacing:-0.01em;
+    margin:26px 0 30px;
+  }
+  .hero h1 em{font-style:italic;color:var(--gold);font-weight:500;}
+  .hero p{
+    max-width:480px;
+    color:var(--text-muted);
+    font-size:16px;
+    margin-bottom:38px;
+  }
+  .hero-cta{display:flex;gap:18px;align-items:center;flex-wrap:wrap;}
+  .hero-side{
+    border-left:1px solid var(--line);
+    padding-left:32px;
+    display:flex;
+    flex-direction:column;
+    gap:26px;
+  }
+  .hero-side .stat-num{font-family:var(--serif);font-size:38px;color:var(--gold-light);}
+  .hero-side .stat-label{font-size:12px;color:var(--text-muted);letter-spacing:0.04em;margin-top:2px;}
+
+  .ticket-divider{
+    margin:0 auto;
+    padding:26px 0;
+    max-width:1180px;
+    display:flex;align-items:center;justify-content:center;gap:16px;
+  }
+  .ticket-divider .dot{width:6px;height:6px;border-radius:50%;border:1px solid var(--gold-dim);}
+  .ticket-divider .line{flex:1;height:0;border-top:1px dashed var(--line);}
+  .ticket-divider .diamond{width:8px;height:8px;background:var(--gold);transform:rotate(45deg);}
+
+  section{padding:120px 0;position:relative;}
+  .section-head{text-align:center;max-width:640px;margin:0 auto 70px;}
+  .section-head h2{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size:clamp(30px,3.6vw,46px);
+    margin-top:20px;
+    line-height:1.15;
+  }
+  .section-head p{color:var(--text-muted);margin-top:18px;font-size:15px;}
+  .center-eyebrow{display:flex;justify-content:center;}
+  .center-eyebrow .eyebrow::before{display:none;}
+  .center-eyebrow .eyebrow::after{content:'';width:22px;height:1px;background:var(--gold-dim);}
+
+  /* --- services --- */
+  .services-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  .service-card{
+    background:var(--bg);
+    padding:44px 36px;
+    transition:background .4s ease;
+  }
+  .service-card:hover{background:var(--bg-card);}
+  .service-num{font-family:var(--serif);font-size:13px;color:var(--gold-dim);letter-spacing:0.1em;}
+  .service-card h3{font-family:var(--serif);font-size:22px;font-weight:500;margin:18px 0 12px;}
+  .service-card p{font-size:14px;color:var(--text-muted);}
+
+  /* --- process --- */
+  .process{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:0;
+    position:relative;
+  }
+  .process::before{
+    content:'';position:absolute;top:13px;left:8%;right:8%;height:1px;
+    background:repeating-linear-gradient(to right, var(--gold-dim) 0 6px, transparent 6px 12px);
+  }
+  .process-step{padding:0 24px;position:relative;text-align:left;}
+  .process-step .p-num{
+    width:26px;height:26px;border:1px solid var(--gold);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--serif);font-size:13px;color:var(--gold-light);
+    background:var(--bg);position:relative;z-index:2;margin-bottom:24px;
+  }
+  .process-step h3{font-family:var(--serif);font-size:19px;font-weight:500;margin-bottom:10px;}
+  .process-step p{font-size:13.5px;color:var(--text-muted);}
+
+  /* --- why / stats band --- */
+  .band{
+    background:var(--bg-alt);
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+  }
+  .band-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    text-align:center;
+  }
+  .band-item{padding:70px 20px;border-left:1px solid var(--line);}
+  .band-item:first-child{border-left:none;}
+  .band-item .num{font-family:var(--serif);font-size:44px;color:var(--gold-light);}
+  .band-item .lbl{font-size:12.5px;color:var(--text-muted);margin-top:10px;letter-spacing:0.03em;}
+
+  /* --- portfolio / clients --- */
+  .clients-strip{
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:30px 10px;
+    padding-top:10px;
+  }
+  .clients-strip span{
+    font-family:var(--serif);font-style:italic;font-size:19px;color:var(--text-muted);
+    opacity:0.75;transition:opacity .3s ease, color .3s ease;
+  }
+  .clients-strip span:hover{opacity:1;color:var(--gold-light);}
+
+  /* --- testimonial --- */
+  .testimonial{max-width:760px;margin:0 auto;text-align:center;}
+  .testimonial blockquote{
+    font-family:var(--serif);font-size:clamp(22px,2.6vw,30px);
+    font-weight:400;line-height:1.5;font-style:italic;color:var(--text);
+  }
+  .testimonial .who{margin-top:30px;font-size:13px;color:var(--gold);letter-spacing:0.05em;}
+  .testimonial .who span{color:var(--text-muted);font-style:normal;}
+
+  /* --- CTA --- */
+  .cta-band{
+    text-align:center;
+    padding:110px 0;
+    position:relative;
+  }
+  .cta-band h2{
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(32px,4.4vw,58px);
+    max-width:760px;margin:22px auto 40px;line-height:1.15;
+  }
+  .cta-band h2 em{color:var(--gold);font-style:italic;}
+  .cta-row{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;}
+
+  /* --- footer --- */
+  footer{border-top:1px solid var(--line);padding:70px 0 34px;}
+  .footer-grid{
+    display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;
+    padding-bottom:50px;
+  }
+  .footer-grid h4{font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;}
+  .footer-grid p, .footer-grid a{font-size:14px;color:var(--text-muted);display:block;margin-bottom:10px;transition:color .3s ease;}
+  .footer-grid a:hover{color:var(--gold-light);}
+  .footer-logo{font-family:var(--serif);font-size:24px;margin-bottom:14px;}
+  .footer-logo span{color:var(--gold);}
+  .footer-bottom{
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+    border-top:1px solid var(--line);padding-top:26px;
+    font-size:12px;color:var(--text-muted);letter-spacing:0.02em;
+  }
+
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:1fr;}
+    .hero-side{border-left:none;border-top:1px solid var(--line);padding-left:0;padding-top:24px;flex-direction:row;flex-wrap:wrap;}
+    .services-grid{grid-template-columns:1fr 1fr;}
+    .process{grid-template-columns:1fr 1fr;row-gap:40px;}
+    .process::before{display:none;}
+    .band-grid{grid-template-columns:1fr 1fr;}
+    .band-item:nth-child(3){border-left:none;}
+    .footer-grid{grid-template-columns:1fr 1fr;}
+    .navlinks{display:none;}
+    .navburger{display:block;}
+  }
+  @media (max-width:560px){
+    .services-grid{grid-template-columns:1fr;}
+    .process{grid-template-columns:1fr;}
+    .band-grid{grid-template-columns:1fr 1fr;}
+    .band-item:nth-child(3){border-left:1px solid var(--line);}
+    .footer-grid{grid-template-columns:1fr;}
+    section{padding:80px 0;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .reveal, .service-card, .process-step, .band-item, .comment-card{transition:none !important;animation:none !important;opacity:1 !important;transform:none !important;}
+    .hero h1 em::after{animation:none;transform:scaleX(1);}
+    html{scroll-behavior:auto;}
+  }
+  :focus-visible{outline:1px solid var(--gold);outline-offset:3px;}
+
+  /* --- quiz --- */
+  .quiz-card{
+    max-width:720px;margin:0 auto;
+    background:var(--bg-card);
+    border:1px solid var(--line);
+    padding:56px 60px;
+    position:relative;
+  }
+  .quiz-progress{display:flex;gap:8px;margin-bottom:34px;}
+  .quiz-progress i{flex:1;height:2px;background:var(--line);position:relative;overflow:hidden;font-style:normal;}
+  .quiz-progress i::after{
+    content:'';position:absolute;inset:0;background:var(--gold);
+    transform:scaleX(0);transform-origin:left;transition:transform .5s ease;
+  }
+  .quiz-progress i.done::after{transform:scaleX(1);}
+  .quiz-step .q-eyebrow{font-size:11px;color:var(--gold-dim);letter-spacing:0.12em;text-transform:uppercase;}
+  .quiz-step h3{font-family:var(--serif);font-weight:400;font-size:26px;margin:14px 0 28px;line-height:1.3;}
+  .quiz-options{display:flex;flex-direction:column;gap:12px;}
+  .quiz-opt{
+    display:flex;align-items:center;gap:14px;
+    padding:16px 20px;border:1px solid var(--line);
+    background:transparent;color:var(--text);
+    font-family:var(--sans);font-size:14.5px;text-align:left;
+    cursor:pointer;transition:border-color .3s ease, background .3s ease;
+  }
+  .quiz-opt .dot{width:9px;height:9px;border:1px solid var(--gold-dim);border-radius:50%;flex-shrink:0;transition:background .3s ease,border-color .3s ease;}
+  .quiz-opt:hover{border-color:var(--gold-dim);}
+  .quiz-opt.selected{border-color:var(--gold);background:rgba(198,161,91,0.08);}
+  .quiz-opt.selected .dot{background:var(--gold);border-color:var(--gold);}
+  .quiz-nav{display:flex;justify-content:space-between;margin-top:36px;}
+  .quiz-nav .btn[disabled]{opacity:0.3;pointer-events:none;}
+  .quiz-result{text-align:center;}
+  .quiz-result .q-eyebrow{display:block;margin-bottom:10px;}
+  .quiz-result h3{font-family:var(--serif);font-size:30px;font-weight:400;margin-bottom:16px;}
+  .quiz-result h3 em{color:var(--gold);font-style:italic;}
+  .quiz-result p{color:var(--text-muted);max-width:480px;margin:0 auto 32px;font-size:14.5px;}
+  .quiz-result-actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+  .quiz-restart{
+    background:none;border:none;color:var(--text-muted);
+    font-size:12px;letter-spacing:0.06em;text-decoration:underline;cursor:pointer;margin-top:20px;
+  }
+  .hidden{display:none !important;}
+
+  /* --- comments --- */
+  .comments-wrap{max-width:820px;margin:0 auto;}
+  .comments-list{display:flex;flex-direction:column;gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:48px;}
+  .comment-card{background:var(--bg);padding:30px 34px;display:flex;gap:18px;}
+  .comment-avatar{
+    width:42px;height:42px;border-radius:50%;
+    border:1px solid var(--gold-dim);
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--serif);color:var(--gold-light);font-size:15px;
+    flex-shrink:0;
+  }
+  .comment-body{flex:1;}
+  .comment-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px 14px;}
+  .comment-name{font-family:var(--serif);font-size:16px;}
+  .comment-date{font-size:12px;color:var(--text-muted);}
+  .comment-stars{color:var(--gold);font-size:12px;letter-spacing:2px;margin:6px 0 10px;}
+  .comment-stars .dim{color:var(--gold-dim);opacity:0.35;}
+  .comment-text{font-size:14.5px;color:var(--text-muted);line-height:1.65;}
+  .comments-empty{padding:40px;text-align:center;color:var(--text-muted);font-size:14px;}
+
+  .comment-form{
+    background:var(--bg-card);border:1px solid var(--line);
+    padding:40px 44px;
+  }
+  .comment-form h4{font-family:var(--serif);font-size:20px;font-weight:500;margin-bottom:22px;}
+  .cf-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
+  .cf-field{display:flex;flex-direction:column;gap:8px;}
+  .cf-field label{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);}
+  .cf-field input, .cf-field textarea{
+    background:transparent;border:none;border-bottom:1px solid var(--line);
+    color:var(--text);font-family:var(--sans);font-size:14.5px;padding:8px 2px;
+    resize:vertical;transition:border-color .3s ease;
+  }
+  .cf-field input:focus, .cf-field textarea:focus{outline:none;border-color:var(--gold);}
+  .cf-stars{display:flex;gap:8px;margin-bottom:24px;}
+  .cf-star{
+    font-size:22px;color:var(--gold-dim);opacity:0.4;background:none;border:none;cursor:pointer;
+    transition:opacity .2s ease, color .2s ease, transform .2s ease;
+  }
+  .cf-star.active{opacity:1;color:var(--gold);transform:scale(1.08);}
+  .cf-msg{font-size:12.5px;margin-top:14px;min-height:16px;color:var(--gold-light);}
+  .cf-msg.error{color:#c98b6b;}
+
+  @media (max-width:700px){
+    .quiz-card{padding:36px 26px;}
+    .comment-card{flex-direction:column;}
+    .cf-row{grid-template-columns:1fr;}
+    .comment-form{padding:30px 24px;}
+  }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="wrap">
+    <nav>
+      <div class="logo">KUBLAB<span>S</span></div>
+      <div class="navlinks">
+        <a href="#layanan">Layanan</a>
+        <a href="#proses">Proses</a>
+        <a href="#kuis">Kuis</a>
+        <a href="#komentar">Komentar</a>
+        <a href="#kontak">Kontak</a>
+      </div>
+      <a href="https://wa.me/6281290352478" target="_blank" rel="noopener" class="btn">Konsultasi Gratis</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="reveal in">
+        <span class="eyebrow">Event Organizer Korporat</span>
+        <h1>Merancang acara yang <em>membekas</em>, untuk perusahaan yang serius soal kesan.</h1>
+        <p>Kublabs membantu perusahaan menyelenggarakan konferensi, gala, dan peluncuran produk dengan presisi — dari konsep hingga detik terakhir acara berlangsung.</p>
+        <div class="hero-cta">
+          <a href="#kontak" class="btn btn-solid">Ajukan Proposal</a>
+          <a href="#layanan" class="btn">Lihat Layanan</a>
+        </div>
+      </div>
+      <div class="hero-side">
+        <div>
+          <div class="stat-num" data-target="120" data-suffix="+">120+</div>
+          <div class="stat-label">Acara korporat terselenggara</div>
+        </div>
+        <div>
+          <div class="stat-num" data-target="9" data-suffix="">9</div>
+          <div class="stat-label">Tahun melayani klien korporat</div>
+        </div>
+        <div>
+          <div class="stat-num" data-target="98" data-suffix="%">98%</div>
+          <div class="stat-label">Klien yang kembali menggunakan jasa kami</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ticket-divider"><div class="dot"></div><div class="line"></div><div class="diamond"></div><div class="line"></div><div class="dot"></div></div>
+
+<section id="layanan">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="center-eyebrow"><span class="eyebrow">Layanan</span></div>
+      <h2 class="serif">Satu tim, seluruh kebutuhan acara perusahaan Anda</h2>
+      <p>Kami menangani setiap jenis acara korporat dengan standar eksekusi yang sama: terencana, tepat waktu, dan tanpa kejutan.</p>
+    </div>
+
+    <div class="services-grid reveal stagger">
+      <div class="service-card frame">
+        <div class="service-num">01</div>
+        <h3>Konferensi & Seminar</h3>
+        <p>Perencanaan venue, tata panggung, dan logistik peserta untuk acara berskala ratusan hingga ribuan orang.</p>
+      </div>
+      <div class="service-card frame">
+        <div class="service-num">02</div>
+        <h3>Gala Dinner & Awards Night</h3>
+        <p>Pengalaman malam penghargaan yang elegan, dari desain panggung hingga koreografi acara.</p>
+      </div>
+      <div class="service-card frame">
+        <div class="service-num">03</div>
+        <h3>Peluncuran Produk</h3>
+        <p>Momen peluncuran yang dirancang untuk media, mitra, dan investor — dengan narasi merek yang konsisten.</p>
+      </div>
+      <div class="service-card frame">
+        <div class="service-num">04</div>
+        <h3>Corporate Gathering</h3>
+        <p>Acara internal perusahaan yang mempererat tim, dari town hall hingga perayaan ulang tahun perusahaan.</p>
+      </div>
+      <div class="service-card frame">
+        <div class="service-num">05</div>
+        <h3>Team Building</h3>
+        <p>Program dan destinasi yang dirancang sesuai tujuan tim: kolaborasi, kepemimpinan, atau sekadar penyegaran.</p>
+      </div>
+      <div class="service-card frame">
+        <div class="service-num">06</div>
+        <h3>Hybrid & Virtual Event</h3>
+        <p>Produksi siaran, platform virtual, dan integrasi audiens daring untuk acara yang menjangkau lebih luas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="proses">
+  <div class="wrap" style="padding-top:120px;padding-bottom:120px;">
+    <div class="section-head reveal">
+      <div class="center-eyebrow"><span class="eyebrow">Cara Kerja</span></div>
+      <h2 class="serif">Empat tahap, satu penanggung jawab</h2>
+      <p>Anda berbicara dengan satu tim dari awal hingga acara selesai — bukan berpindah kontak di setiap tahap.</p>
+    </div>
+    <div class="process reveal stagger">
+      <div class="process-step">
+        <div class="p-num">1</div>
+        <h3>Konsultasi</h3>
+        <p>Memahami tujuan acara, audiens, anggaran, dan batasan waktu perusahaan Anda.</p>
+      </div>
+      <div class="process-step">
+        <div class="p-num">2</div>
+        <h3>Konsep & Proposal</h3>
+        <p>Menyusun konsep acara, rencana anggaran, dan linimasa kerja secara tertulis.</p>
+      </div>
+      <div class="process-step">
+        <div class="p-num">3</div>
+        <h3>Eksekusi</h3>
+        <p>Produksi, koordinasi vendor, dan pengawasan penuh di lapangan pada hari-H.</p>
+      </div>
+      <div class="process-step">
+        <div class="p-num">4</div>
+        <h3>Evaluasi</h3>
+        <p>Laporan hasil acara dan rekomendasi perbaikan untuk kerja sama berikutnya.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="band-grid reveal stagger">
+    <div class="band-item"><div class="num" data-target="120" data-suffix="+">120+</div><div class="lbl">Acara korporat</div></div>
+    <div class="band-item"><div class="num" data-target="45" data-suffix="">45</div><div class="lbl">Perusahaan mitra tetap</div></div>
+    <div class="band-item"><div class="num" data-target="9" data-suffix="">9</div><div class="lbl">Tahun pengalaman</div></div>
+    <div class="band-item"><div class="num">24/7</div><div class="lbl">Dukungan tim di hari acara</div></div>
+  </div>
+</section>
+
+<section id="kuis">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="center-eyebrow"><span class="eyebrow">Kuis Interaktif</span></div>
+      <h2 class="serif">Acara seperti apa yang paling cocok untuk perusahaan Anda?</h2>
+      <p>Jawab 3 pertanyaan singkat, dan kami akan merekomendasikan jenis acara yang paling sesuai.</p>
+    </div>
+
+    <div class="quiz-card reveal" id="quizCard">
+      <div class="quiz-progress" id="quizProgress">
+        <i></i><i></i><i></i>
+      </div>
+
+      <div class="quiz-step" data-step="0">
+        <span class="q-eyebrow">Pertanyaan 1 dari 3</span>
+        <h3>Apa tujuan utama acara Anda?</h3>
+        <div class="quiz-options">
+          <button class="quiz-opt" data-q="goal" data-v="branding"><span class="dot"></span>Membangun citra & jaringan bisnis</button>
+          <button class="quiz-opt" data-q="goal" data-v="launch"><span class="dot"></span>Meluncurkan produk atau layanan baru</button>
+          <button class="quiz-opt" data-q="goal" data-v="celebrate"><span class="dot"></span>Merayakan pencapaian perusahaan/tim</button>
+          <button class="quiz-opt" data-q="goal" data-v="teambuilding"><span class="dot"></span>Meningkatkan kekompakan tim</button>
+        </div>
+      </div>
+
+      <div class="quiz-step hidden" data-step="1">
+        <span class="q-eyebrow">Pertanyaan 2 dari 3</span>
+        <h3>Berapa perkiraan jumlah peserta?</h3>
+        <div class="quiz-options">
+          <button class="quiz-opt" data-q="size" data-v="small"><span class="dot"></span>Kurang dari 50 orang</button>
+          <button class="quiz-opt" data-q="size" data-v="medium"><span class="dot"></span>50–200 orang</button>
+          <button class="quiz-opt" data-q="size" data-v="large"><span class="dot"></span>200–500 orang</button>
+          <button class="quiz-opt" data-q="size" data-v="xlarge"><span class="dot"></span>Lebih dari 500 orang</button>
+        </div>
+      </div>
+
+      <div class="quiz-step hidden" data-step="2">
+        <span class="q-eyebrow">Pertanyaan 3 dari 3</span>
+        <h3>Format acara yang Anda inginkan?</h3>
+        <div class="quiz-options">
+          <button class="quiz-opt" data-q="format" data-v="offline"><span class="dot"></span>Tatap muka langsung</button>
+          <button class="quiz-opt" data-q="format" data-v="hybrid"><span class="dot"></span>Hybrid (online & offline)</button>
+          <button class="quiz-opt" data-q="format" data-v="virtual"><span class="dot"></span>Sepenuhnya virtual</button>
+        </div>
+      </div>
+
+      <div class="quiz-step hidden quiz-result" data-step="result">
+        <span class="q-eyebrow">Rekomendasi Untuk Anda</span>
+        <h3 id="quizResultTitle">—</h3>
+        <p id="quizResultDesc">—</p>
+        <div class="quiz-result-actions">
+          <a href="#" id="quizResultCta" target="_blank" rel="noopener" class="btn btn-solid">Konsultasikan via WhatsApp</a>
+          <a href="#layanan" class="btn">Lihat Semua Layanan</a>
+        </div>
+        <button class="quiz-restart" id="quizRestart">Ulangi kuis</button>
+      </div>
+
+      <div class="quiz-nav" id="quizNav">
+        <button class="btn" id="quizBack" disabled>Kembali</button>
+        <button class="btn btn-solid" id="quizNext" disabled>Lanjut</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="portofolio">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="center-eyebrow"><span class="eyebrow">Dipercaya Oleh</span></div>
+      <h2 class="serif">Perusahaan yang telah bekerja sama dengan kami</h2>
+    </div>
+    <div class="clients-strip reveal">
+      <span>Nusantara Finance</span>
+      <span>Kirana Group</span>
+      <span>Pratama Energi</span>
+      <span>Bintang Logistik</span>
+      <span>Cendana Capital</span>
+      <span>Meru Teknologi</span>
+    </div>
+  </div>
+</section>
+
+<div class="ticket-divider"><div class="dot"></div><div class="line"></div><div class="diamond"></div><div class="line"></div><div class="dot"></div></div>
+
+<section>
+  <div class="wrap testimonial reveal">
+    <blockquote>“Kublabs mengambil alih seluruh beban logistik acara tahunan kami. Yang kami rasakan hanya hasilnya: acara yang berjalan mulus dari awal sampai akhir.”</blockquote>
+    <div class="who">Head of Corporate Affairs <span>— Kirana Group</span></div>
+  </div>
+</section>
+
+<section id="komentar">
+  <div class="wrap comments-wrap">
+    <div class="section-head reveal">
+      <div class="center-eyebrow"><span class="eyebrow">Ruang Komentar</span></div>
+      <h2 class="serif">Apa kata klien yang pernah bekerja sama dengan kami</h2>
+      <p>Komentar ditulis langsung oleh pengunjung halaman ini dan tampil untuk semua orang.</p>
+    </div>
+
+    <div class="comments-list reveal" id="commentsList">
+      <div class="comments-empty">Memuat komentar…</div>
+    </div>
+
+    <form class="comment-form reveal" id="commentForm">
+      <h4>Tinggalkan Komentar</h4>
+      <div class="cf-row">
+        <div class="cf-field">
+          <label for="cfName">Nama</label>
+          <input type="text" id="cfName" placeholder="Nama Anda" maxlength="60" required>
+        </div>
+        <div class="cf-field">
+          <label for="cfCompany">Perusahaan (opsional)</label>
+          <input type="text" id="cfCompany" placeholder="Nama perusahaan" maxlength="60">
+        </div>
+      </div>
+      <div class="cf-field" style="margin-bottom:18px;">
+        <label>Penilaian</label>
+        <div class="cf-stars" id="cfStars">
+          <button type="button" class="cf-star" data-v="1">★</button>
+          <button type="button" class="cf-star" data-v="2">★</button>
+          <button type="button" class="cf-star" data-v="3">★</button>
+          <button type="button" class="cf-star" data-v="4">★</button>
+          <button type="button" class="cf-star active" data-v="5">★</button>
+        </div>
+      </div>
+      <div class="cf-field" style="margin-bottom:8px;">
+        <label for="cfText">Komentar</label>
+        <textarea id="cfText" rows="3" placeholder="Ceritakan pengalaman Anda bekerja sama dengan kami" maxlength="400" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-solid" style="margin-top:18px;">Kirim Komentar</button>
+      <div class="cf-msg" id="cfMsg"></div>
+    </form>
+  </div>
+</section>
+
+<section class="cta-band" id="kontak">
+  <div class="wrap reveal">
+    <div class="center-eyebrow"><span class="eyebrow">Mulai Rencanakan</span></div>
+    <h2>Acara perusahaan Anda berikutnya, <em>ditangani dengan tepat.</em></h2>
+    <div class="cta-row">
+      <a href="mailto:hello@kublabs.id" class="btn btn-solid">hello@kublabs.id</a>
+      <a href="https://wa.me/6281290352478" target="_blank" rel="noopener" class="btn">+62 812-9035-2478 (WhatsApp)</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">KUBLAB<span>S</span></div>
+        <p style="max-width:280px;">Event organizer korporat yang berfokus pada perusahaan yang mengutamakan detail dan kesan.</p>
+      </div>
+      <div>
+        <h4>Layanan</h4>
+        <a href="#layanan">Konferensi & Seminar</a>
+        <a href="#layanan">Gala Dinner</a>
+        <a href="#layanan">Peluncuran Produk</a>
+        <a href="#layanan">Team Building</a>
+      </div>
+      <div>
+        <h4>Perusahaan</h4>
+        <a href="#proses">Cara Kerja</a>
+        <a href="#portofolio">Portofolio</a>
+        <a href="#kontak">Kontak</a>
+      </div>
+      <div>
+        <h4>Kontak</h4>
+        <p>Jakarta, Indonesia</p>
+        <a href="mailto:hello@kublabs.id">hello@kublabs.id</a>
+        <a href="https://wa.me/6281290352478" target="_blank" rel="noopener">+62 812-9035-2478 (WhatsApp)</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Kublabs Events. Seluruh hak cipta dilindungi.</span>
+      <span>Dibuat untuk perusahaan yang tak berkompromi soal kesan pertama.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---------- Scroll reveal ---------- */
+const revealEls = document.querySelectorAll('.reveal');
+const revealIO = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      e.target.classList.add('in');
+      animateCountersIn(e.target);
+      revealIO.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.15 });
+revealEls.forEach(el => revealIO.observe(el));
+
+/* ---------- Animated counters ---------- */
+function animateCountersIn(container){
+  const nums = container.querySelectorAll('[data-target]');
+  nums.forEach(el => {
+    if(el.dataset.counted) return;
+    el.dataset.counted = '1';
+    const target = parseInt(el.dataset.target, 10);
+    const suffix = el.dataset.suffix || '';
+    const duration = 1400;
+    const start = performance.now();
+    function step(now){
+      const p = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(eased * target) + suffix;
+      if(p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  });
+}
+
+/* ---------- Quiz ---------- */
+(function(){
+  const steps = Array.from(document.querySelectorAll('.quiz-step'));
+  const progressDots = Array.from(document.querySelectorAll('#quizProgress i'));
+  const backBtn = document.getElementById('quizBack');
+  const nextBtn = document.getElementById('quizNext');
+  const nav = document.getElementById('quizNav');
+  const restartBtn = document.getElementById('quizRestart');
+  const resultCta = document.getElementById('quizResultCta');
+  const resultTitle = document.getElementById('quizResultTitle');
+  const resultDesc = document.getElementById('quizResultDesc');
+
+  let current = 0; // index into steps (0,1,2), 3 = result
+  const answers = {};
+
+  const recommendations = {
+    virtual: {
+      title: 'Hybrid & Virtual Event',
+      desc: 'Kami akan merancang produksi siaran dan platform virtual yang membuat audiens daring Anda tetap terlibat penuh, seolah hadir langsung.'
+    },
+    launch: {
+      title: 'Peluncuran Produk',
+      desc: 'Momen peluncuran yang dirancang untuk media, mitra, dan investor, dengan narasi merek yang konsisten dari awal hingga akhir.'
+    },
+    celebrate_small: {
+      title: 'Corporate Gathering',
+      desc: 'Acara internal yang hangat dan personal untuk mempererat tim, cocok untuk skala peserta yang lebih kecil.'
+    },
+    celebrate_large: {
+      title: 'Gala Dinner & Awards Night',
+      desc: 'Malam penghargaan yang elegan, lengkap dengan desain panggung dan koreografi acara untuk merayakan pencapaian bersama.'
+    },
+    teambuilding: {
+      title: 'Team Building',
+      desc: 'Program dan destinasi yang dirancang khusus untuk memperkuat kolaborasi dan kekompakan tim Anda.'
+    },
+    branding_large: {
+      title: 'Konferensi & Seminar',
+      desc: 'Perencanaan venue, tata panggung, dan logistik peserta berskala besar untuk memperkuat citra dan jaringan bisnis Anda.'
+    },
+    branding_small: {
+      title: 'Corporate Gathering',
+      desc: 'Acara berskala lebih kecil yang tetap efektif membangun relasi dan citra perusahaan Anda di hadapan mitra terdekat.'
+    }
+  };
+
+  function getRecommendation(){
+    if(answers.format === 'virtual') return recommendations.virtual;
+    if(answers.goal === 'launch') return recommendations.launch;
+    if(answers.goal === 'celebrate'){
+      return (answers.size === 'large' || answers.size === 'xlarge') ? recommendations.celebrate_large : recommendations.celebrate_small;
+    }
+    if(answers.goal === 'teambuilding') return recommendations.teambuilding;
+    if(answers.goal === 'branding'){
+      return (answers.size === 'large' || answers.size === 'xlarge') ? recommendations.branding_large : recommendations.branding_small;
+    }
+    return recommendations.branding_small;
+  }
+
+  function showStep(i){
+    steps.forEach(s => s.classList.add('hidden'));
+    if(i < 3){
+      steps[i].classList.remove('hidden');
+      nav.classList.remove('hidden');
+      backBtn.disabled = (i === 0);
+      const q = steps[i].querySelector('.quiz-opt.selected');
+      nextBtn.disabled = !q;
+      nextBtn.textContent = (i === 2) ? 'Lihat Rekomendasi' : 'Lanjut';
+    } else {
+      document.querySelector('.quiz-result').classList.remove('hidden');
+      nav.classList.add('hidden');
+      const rec = getRecommendation();
+      resultTitle.innerHTML = 'Coba pertimbangkan <em>' + rec.title + '</em>';
+      resultDesc.textContent = rec.desc;
+      const msg = 'Halo Kublabs, saya ingin konsultasi soal ' + rec.title + ' untuk perusahaan kami.';
+      resultCta.href = 'https://wa.me/6281290352478?text=' + encodeURIComponent(msg);
+    }
+    progressDots.forEach((d, idx) => d.classList.toggle('done', idx < Math.min(i,3)));
+  }
+
+  document.querySelectorAll('.quiz-opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const q = btn.dataset.q;
+      const v = btn.dataset.v;
+      answers[q] = v;
+      btn.closest('.quiz-options').querySelectorAll('.quiz-opt').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      nextBtn.disabled = false;
+    });
+  });
+
+  nextBtn.addEventListener('click', () => {
+    if(current < 2){ current++; showStep(current); }
+    else { current = 3; showStep(current); }
+  });
+  backBtn.addEventListener('click', () => {
+    if(current > 0){ current--; showStep(current); }
+  });
+  restartBtn.addEventListener('click', () => {
+    current = 0;
+    Object.keys(answers).forEach(k => delete answers[k]);
+    document.querySelectorAll('.quiz-opt.selected').forEach(b => b.classList.remove('selected'));
+    document.querySelector('.quiz-result').classList.add('hidden');
+    showStep(0);
+  });
+
+  showStep(0);
+})();
+
+/* ---------- Comments (shared storage) ---------- */
+(function(){
+  const listEl = document.getElementById('commentsList');
+  const form = document.getElementById('commentForm');
+  const msgEl = document.getElementById('cfMsg');
+  const starsWrap = document.getElementById('cfStars');
+  let currentRating = 5;
+
+  const seedComments = [
+    { name:'Head of Corporate Affairs', company:'Kirana Group', rating:5, text:'Kublabs mengambil alih seluruh beban logistik acara tahunan kami. Hasilnya terasa jauh lebih rapi.', date:'Juli 2026' },
+    { name:'HR Manager', company:'Nusantara Finance', rating:5, text:'Komunikasi tim Kublabs sangat jelas dari awal sampai hari-H. Tidak ada kejutan yang tidak diinginkan.', date:'Juni 2026' },
+    { name:'Marketing Director', company:'Pratama Energi', rating:4, text:'Peluncuran produk kami berjalan lancar. Konsep panggung dan tata acara terasa sangat matang.', date:'Mei 2026' }
+  ];
+
+  function initials(name){
+    return name.split(' ').filter(Boolean).slice(0,2).map(w => w[0].toUpperCase()).join('');
+  }
+
+  function starMarkup(rating){
+    let out = '';
+    for(let i=1;i<=5;i++){
+      out += '<span class="' + (i <= rating ? '' : 'dim') + '">★</span>';
+    }
+    return out;
+  }
+
+  function renderComments(list){
+    if(!list || list.length === 0){
+      listEl.innerHTML = '<div class="comments-empty">Belum ada komentar. Jadilah yang pertama menulis pengalaman Anda.</div>';
+      return;
+    }
+    listEl.innerHTML = list.map(c => `
+      <div class="comment-card">
+        <div class="comment-avatar">${initials(c.name)}</div>
+        <div class="comment-body">
+          <div class="comment-head">
+            <span class="comment-name">${escapeHtml(c.name)}${c.company ? ' <span style="color:var(--text-muted);font-family:var(--sans);font-size:12.5px;">— '+escapeHtml(c.company)+'</span>' : ''}</span>
+            <span class="comment-date">${escapeHtml(c.date)}</span>
+          </div>
+          <div class="comment-stars">${starMarkup(c.rating)}</div>
+          <div class="comment-text">${escapeHtml(c.text)}</div>
+        </div>
+      </div>
+    `).join('');
+    listEl.classList.add('in');
+  }
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+  }
+
+  async function loadComments(){
+    try{
+      const res = await window.storage.get('kublabs_comments', true);
+      return res && res.value ? JSON.parse(res.value) : seedComments;
+    }catch(err){
+      return seedComments;
+    }
+  }
+
+  async function saveComments(list){
+    await window.storage.set('kublabs_comments', JSON.stringify(list), true);
+  }
+
+  let allComments = [];
+
+  loadComments().then(list => {
+    allComments = list;
+    renderComments(allComments);
+  });
+
+  starsWrap.addEventListener('click', (e) => {
+    const btn = e.target.closest('.cf-star');
+    if(!btn) return;
+    currentRating = parseInt(btn.dataset.v, 10);
+    Array.from(starsWrap.children).forEach(s => {
+      s.classList.toggle('active', parseInt(s.dataset.v,10) <= currentRating);
+    });
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('cfName').value.trim();
+    const company = document.getElementById('cfCompany').value.trim();
+    const text = document.getElementById('cfText').value.trim();
+    if(!name || !text){
+      msgEl.textContent = 'Mohon isi nama dan komentar terlebih dahulu.';
+      msgEl.classList.add('error');
+      return;
+    }
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    msgEl.classList.remove('error');
+    msgEl.textContent = 'Mengirim…';
+
+    const newComment = {
+      name, company, rating: currentRating, text,
+      date: new Date().toLocaleDateString('id-ID', { month:'long', year:'numeric' })
+    };
+
+    try{
+      allComments = [newComment, ...allComments];
+      await saveComments(allComments);
+      renderComments(allComments);
+      form.reset();
+      currentRating = 5;
+      Array.from(starsWrap.children).forEach(s => s.classList.toggle('active', parseInt(s.dataset.v,10) <= 5));
+      msgEl.textContent = 'Terima kasih, komentar Anda sudah tampil di atas.';
+    }catch(err){
+      msgEl.textContent = 'Gagal mengirim komentar. Silakan coba lagi.';
+      msgEl.classList.add('error');
+    }finally{
+      submitBtn.disabled = false;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
